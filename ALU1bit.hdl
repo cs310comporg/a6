@@ -1,0 +1,26 @@
+/**
+ * Mai Nou Yang & Nathan Moder
+ * Larc ALU1bit:
+ *   switch( {nor,sub} ) {
+ *     case {0,0}: cout,out = a + b + cin
+ *     case {0,1}: cout,out = a + (!b) + cin
+ *     default:    out = a NOR b  // (cin and cout ignored)
+ */
+
+CHIP ALU1bit {
+
+    IN a,b,      // the two bits to be operated on
+       cin,      // the carry-in bit (ignored for NOR)
+       sub,      // 1 if subtraction is the requested operation
+       nor;      // 1 if NOR is the requested operation
+    OUT out,     // single-bit output of the requested operation
+        cout;    // carry-out bit (ignored for NOR)
+
+    PARTS:
+        Not(in = b , out = notB) ;
+        Mux(a = b , b = notB , sel = sub , out = outB) ;
+        FullAdder(a = a , b = outB , c = cin , carry = cout , sum = aPlusB) ;
+        Or(a = a , b = b , out = aOrB) ;
+		Not(in = aOrB , out = aNorB) ;
+        Mux(a = aPlusB , b = aNorB , sel = nor , out = out) ;
+}

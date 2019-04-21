@@ -1,0 +1,64 @@
+// File name: Larc.hdl
+//Nathan Moder & Mai Nou Yang
+
+/**
+ * Larc computer - MULTI-cycle implementation
+ */
+
+CHIP Larc {
+
+
+    PARTS:
+
+    //Program Counter implementation
+    PC(in = pcInput , load = pcWrite , out = currPc , out = pcOut , inc = false , reset = false) ;
+
+    //M Src mux
+    Mux16(a = pcCout , b = aluOutOutput , sel = mSrc , out = mInput) ;
+
+    //M implementation
+    RAM16K(in = rd2Out , address = mInput ,  load = mWrite , out = instruction) ;
+
+    //IR implementation
+    Register(in = instruction , load = irWrite , out[4..7] = rb , out[0..3] = rc , out[8..11] = ra , out[0..7] = limm1 , out[7] = limm1Sign , out[0..3] = simm1 , out[8..11] = simm2 , out[4..11] = limm2 , out[12..15] = opcode) ;
+
+    //MDR implementation
+    Register(in = instruction , load = mdrWrite , out = mdrOut) ;
+
+    //ALU1 selector
+    Mux4Way16(a = pcOut , b = false , c = rd1Out , sel = alu1 , out = alu1SelOut) ;
+
+    //ALU2 selector
+    Mux4Way16(a = , b = true , c = sOrLOut , d = , sel = alu2 , out = alu2SelOut) ;
+
+    //ALU implementation
+    ALU(a = alu1SelOut , b = alu2SelOut , sub = sub , nor = nor , z = z , out = aluOut) ;
+
+    //Branch Equal/Branch Not Equal
+    Mux(a = bn , b = be , sel = z , out = bSel) ;
+
+    Or(a = bSel , b = jal , out = brOrJal) ;
+    Or(a = be , b = bn , out = beOrBn) ;
+
+    //BE/BN/JAL selector (mux that goes into PC)
+    Mux4Way16(a = aluOut , b = rd1Out , c = pcOut , d = aluOutOutput , sel[0] = brOrJal , sel[1] = beOrBn , out = pcInput ) ;
+
+    //LI selector
+    Mux16(a[0..7] = false , a[8..15] = limm1 , b[8..15] = limm1Sign , b[0..7] = limm1 , sel = li , out = liOut) ;
+
+    //RFWD selector
+    Mux4Way16(a = liOut , b = pcOut , c = mdrOut , d = aluOutOutput , sel = rfwd , out = rfwdOut) ;
+
+    //RegisterFile implementation
+    RegisterFile(rr1 = , rr2 = , wr = ra , wd = rfwdOut , load = rfWrite , rd1 = rd1Out , rd2 = rd2Out ) ;
+
+    //LW Selector implementation
+    Mux4(a = simm2 , b = simm1 , sel = lw , out = lwOut , out[3] = lwOutSign) ;
+
+    //SorL implementation
+    Mux16(a[0..3] = lwOut , a[4..7] = lwOutSign , b = , sel = sOrL , out = sOrLOut) ;
+
+    //ALU Out Register
+    Register(in = aluOut , load = aluOutWrite , out = aluOutOutput) ;
+
+}

@@ -1,0 +1,23 @@
+
+
+/**
+ * MultiLarc CU
+ *
+ * 
+ */
+
+CHIP CU {
+
+    IN opcode[4];
+    OUT ;
+	// Output missing
+
+
+
+
+    PARTS:
+
+	// Implementation missing
+	
+	
+}
