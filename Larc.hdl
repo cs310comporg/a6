@@ -14,22 +14,23 @@ CHIP Larc {
     PC(in = pcInput , load = pcWrite , out = currPc , out = pcOut , inc = false , reset = false) ;
 
     //M Src mux
-    Mux16(a = pcCout , b = aluOutOutput , sel = mSrc , out = mInput) ;
+    Mux16(a = pcOut , b = aluOutOutput , sel = mSrc , out[0..13] = mInput) ;
 
     //M implementation
     RAM16K(in = rd2Out , address = mInput ,  load = mWrite , out = instruction) ;
 
     //IR implementation
-    Register(in = instruction , load = irWrite , out[4..7] = rb , out[0..3] = rc , out[8..11] = ra , out[0..7] = limm1 , out[7] = limm1Sign , out[0..3] = simm1 , out[8..11] = simm2 , out[4..11] = limm2 , out[12..15] = opcode) ;
+    Register(in = instruction , load = irWrite , out[4..7] = rb , out[0..3] = rc , out[8..11] = ra , out[0..7] = limm1 , out[7] = limm1Sign , 
+		out[0..3] = simm1 , out[8..11] = simm2 , out[4..11] = limm2 , out[11] = limm2Sign , out[12..15] = opcode) ;
 
     //MDR implementation
     Register(in = instruction , load = mdrWrite , out = mdrOut) ;
 
     //ALU1 selector
-    Mux4Way16(a = pcOut , b = false , c = rd1Out , sel = alu1 , out = alu1SelOut) ;
+    Mux4Way16(a = pcOut , b = false , c = rd1Out , sel[0] = alu10 , sel[1] = alu12 , out = alu1SelOut) ;
 
     //ALU2 selector
-    Mux4Way16(a = , b = true , c = sOrLOut , d = , sel = alu2 , out = alu2SelOut) ;
+    Mux4Way16(a = rd2Out , b = true , c = sOrLOut , d = aluOutOutput , sel[0] = alu20 , sel[1] = alu21 , out = alu2SelOut) ;
 
     //ALU implementation
     ALU(a = alu1SelOut , b = alu2SelOut , sub = sub , nor = nor , z = z , out = aluOut) ;
@@ -44,19 +45,23 @@ CHIP Larc {
     Mux4Way16(a = aluOut , b = rd1Out , c = pcOut , d = aluOutOutput , sel[0] = brOrJal , sel[1] = beOrBn , out = pcInput ) ;
 
     //LI selector
-    Mux16(a[0..7] = false , a[8..15] = limm1 , b[8..15] = limm1Sign , b[0..7] = limm1 , sel = li , out = liOut) ;
+    Mux16(a[0..7] = false , a[8..15] = limm1 , b[8] = limm1Sign , b[9] = limm1Sign , b[10] = limm1Sign , 
+		b[11] = limm1Sign , b[12] = limm1Sign , b[13] = limm1Sign , b[14] = limm1Sign , b[15] = limm1Sign , b[0..7] = limm1 , sel = li , out = liOut) ;
 
     //RFWD selector
-    Mux4Way16(a = liOut , b = pcOut , c = mdrOut , d = aluOutOutput , sel = rfwd , out = rfwdOut) ;
+    Mux4Way16(a = liOut , b = pcOut , c = mdrOut , d = aluOutOutput , sel[0] = rfwd0 , sel[1] = rfwd1 , out = rfwdOut) ;
 
     //RegisterFile implementation
-    RegisterFile(rr1 = , rr2 = , wr = ra , wd = rfwdOut , load = rfWrite , rd1 = rd1Out , rd2 = rd2Out ) ;
+    RegisterFile(rr1 = rb , rr2 = rc , wr = ra , wd = rfwdOut , load = rfWrite , rd1 = rd1Out , rd2 = rd2Out ) ;
 
     //LW Selector implementation
     Mux4(a = simm2 , b = simm1 , sel = lw , out = lwOut , out[3] = lwOutSign) ;
 
     //SorL implementation
-    Mux16(a[0..3] = lwOut , a[4..7] = lwOutSign , b = , sel = sOrL , out = sOrLOut) ;
+    Mux16(a[0..3] = lwOut , a[4] = lwOutSign , a[5] = lwOutSign , a[6] = lwOutSign , a[7] = lwOutSign , a[8] = lwOutSign , a[9] = lwOutSign , 
+		a[10] = lwOutSign , a[11] = lwOutSign , a[12] = lwOutSign , a[13] = lwOutSign , a[14] = lwOutSign , a[15] = lwOutSign , b[0..7] = limm2 , 
+		b[8] = limm2Sign , b[9] = limm2Sign , b[10] = limm2Sign , b[11] = limm2Sign , b[12] = limm2Sign , b[13] = limm2Sign , b[14] = limm2Sign , 
+		b[15] = limm2Sign , sel = sOrL , out = sOrLOut) ;
 
     //ALU Out Register
     Register(in = aluOut , load = aluOutWrite , out = aluOutOutput) ;

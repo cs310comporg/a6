@@ -2,7 +2,7 @@
 
 /**
  * MultiLarc CU
- *
+ * Mai Nou Yang & Nathan Moder 
  * 
  */
 
@@ -17,7 +17,53 @@ CHIP CU {
 
     PARTS:
 
-	// Implementation missing
+	Not(in = s0 , out = notS0) ;
+	Not(in = s1 , out = notS1) ;
+	Not(in = s2 , out = notS2) ;
+	Not(in = s3 , out = notS3) ;
+	Not(in = s4 , out = notS4) ;
 	
-	
+	//states implementation
+	And5Way(a = notS4 , b = notS3 , c = notS2 , d = notS1 , e = notS0 , out = state0) ; 
+	And5Way(a = notS4 , b = notS3 , c = notS2 , d = notS1 , e = s0 , out = state1) ; 
+	And5Way(a = notS4 , b = notS3 , c = notS2 , d = s1 , e = notS0 , out = state2) ; 
+	And5Way(a = notS4 , b = notS3 , c = notS2 , d = s1 , e = s0 , out = state3) ; 
+	And5Way(a = notS4 , b = notS3 , c = s2 , d = notS1 , e = notS0 , out = state4) ; 
+	And5Way(a = notS4 , b = notS3 , c = s2 , d = notS1 , e = s0 , out = state5) ; 
+	And5Way(a = notS4 , b = notS3 , c = s2 , d = s1 , e = notS0 , out = state6) ; 
+	And5Way(a = notS4 , b = notS3 , c = s2 , d = s1 , e = s0 , out = state7) ; 
+	And5Way(a = notS4 , b = s3 , c = notS2 , d = notS1 , e = notS0 , out = state8) ; 
+	And5Way(a = notS4 , b = s3 , c = notS2 , d = notS1 , e = s0 , out = state9) ; 
+	And5Way(a = notS4 , b = s3 , c = notS2 , d = s1 , e = notS0 , out = state10) ; 
+	And5Way(a = notS4 , b = s3 , c = notS2 , d = s1 , e = s0 , out = state11) ; 
+	And5Way(a = notS4 , b = s3 , c = s2 , d = notS1 , e = notS0 , out = state12) ; 
+	And5Way(a = notS4 , b = s3 , c = s2 , d = notS1 , e = s0 , out = state13) ; 
+	And5Way(a = notS4 , b = s3 , c = s2 , d = s1 , e = notS0 , out = state14) ; 
+	And5Way(a = notS4 , b = s3 , c = s2 , d = s1 , e = s0 , out = state15) ; 
+	And5Way(a = s4 , b = notS3 , c = notS2 , d = notS1 , e = notS0 , out = state16) ; 
+
+	Or16Way(a = state0 , b = state9 , c = state10 , d = state16, out = pcWrite) ; 
+	Or16Way(a = state12 , b = state15 , out = mSrc) ; 
+	Or16Way(a = state15 , out = mWrite) ; 
+	Or16Way(a = state0 , out = irWrite) ;
+	Or16Way(a = state12 , out = mdrWrite)
+	Or16Way(a = state11 , out = lw) ; 
+	Or16Way(a = state7 , out = li) ;
+	Or16Way(a = state3 , b = state13 , out = rfwd0) ;
+	Or16Way(a = state3 , b = state16 , out = rfwd1) ;
+	Or16Way(a = state3 , b = state7 , c = state8 , d = state13 , e = state16 out = rfWrite) ;
+	Or16Way(a = state1 , out = sOrL) ; 
+	Or16Way(a = state1 , out = rd1Write ) ; 
+	Or16Way(a = state1 , out = rd2Write ) ; 
+	Or16Way(a = state2 , b = state4 , c = state5 , d = state6, e = state11 , f = state14 , out = alu10) ;
+	Or16Way(a = state9 , b = state10 , out = alu11) ; 
+	Or16Way(a = state11 , b = state14, c = state1 , out = alu20) ; 
+	Or16Way(a = state0 , out = alu21);
+	Or16Way(a = state4 , b = state6 ,  c = state9 , d = state10 , out = sub) ; 
+	Or16Way(a = state5 , b = state6 , out = nor) ; 
+	Or16Way(a = state10 , out = bn) ;
+	Or16Way(a = state9 , out = be) ; 
+	Or16Way(a = state1 , b = state2 , c = state4 , d = state5 , e = state6 , f = state11 , g = state14 , out = aluOut) ;
+	Or16Way(a = state16 , out = jal) ; 
+
 }

@@ -41,10 +41,18 @@ CHIP ALU {
 	ALU1bit(a = a[14] , b = b[14] , sub = sub , nor = xnor , cin = cout13  , out = out15 , cout = cout14) ;
 	ALU1bit(a = a[15] , b = b[15] , sub = sub , nor = xnor , cin = cout14  , out = out16 , cout = overflow) ;
 	
+	Xor(a = overflow , b = out16 , out = overflowOut) ; 
+	
 	Or16Way(a = out1 , b = out2 , c = out3 , d = out4 , e = out5 , f = out6 , g = out7 , h = out8 , i = out9 , j = out10 , k = out11 , l = out12 , m = out13 , n = out14 , o = out15 , p = out16 , out = outOr16) ;
 	Not(in = outOr16 , out = z) ;
 	
-	Mux16(a[0] = out1 , a[1] = out2 , a[2] = out3 , a[3] = out4 , a[4] = out5 , a[5] = out6 , a[6] = out7 , a[7] = out8 , a[8] = out9 , a[9] = out10 , a[10] = out11 , a[11] = out12 , a[12] = out13 , a[13] = out14 , a[14] = out15 , a[15] = out16 , b[0] = out16 , b[1] = false , b[2] = false , b[3] = false , b[4] = false , b[5] = false , b[6] = false , b[7] = false , b[8] = false , b[9] = false , b[10] = false , b[11] = false , b[12] = false , b[13] = false , b[14] = false , b[15] = false , sel = SLT , out = out) ;
+	Mux16(a[0] = out1 , a[1] = out2 , a[2] = out3 , a[3] = out4 , a[4] = out5 , 
+		a[5] = out6 , a[6] = out7 , a[7] = out8 , a[8] = out9 , a[9] = out10 , 
+		a[10] = out11 , a[11] = out12 , a[12] = out13 , a[13] = out14 , a[14] = out15 , 
+		a[15] = out16 , b[0] = overflowOut , b[1] = false , b[2] = false , b[3] = false , 
+		b[4] = false , b[5] = false , b[6] = false , b[7] = false , b[8] = false , 
+		b[9] = false , b[10] = false , b[11] = false , b[12] = false , b[13] = false , 
+		b[14] = false , b[15] = false , sel = SLT , out = out) ;
 	
 	
 }

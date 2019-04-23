@@ -1,0 +1,26 @@
+/**
+ * Mai Nou Yang & Nathan Moder
+ * 16-ary Or gate: out = a Or b ... Or p
+ */
+
+CHIP Or16Way {
+    IN a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p;
+    OUT out;
+
+    PARTS:
+        Or(a = a , b = b , out = out1) ;
+        Or(a = c , b = d , out = out2) ;
+        Or(a = e , b = f , out = out3) ;
+        Or(a = g , b = h , out = out4) ;
+        Or(a = i , b = j , out = out5) ;
+        Or(a = k , b = l , out = out6) ;
+        Or(a = m , b = n , out = out7) ;
+        Or(a = o , b = p , out = out8) ;
+        Or(a = out1 , b = out2 , out = out9) ;
+        Or(a = out3 , b = out4 , out = out10) ;
+        Or(a = out5 , b = out6 , out = out11) ;
+        Or(a = out7 , b = out8 , out = out12) ;
+        Or(a = out9 , b = out10 , out = out13) ;
+        Or(a = out11 , b = out12 , out = out14) ;
+        Or(a = out13 , b = out14 , out = out) ;
+}

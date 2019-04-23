@@ -1,0 +1,16 @@
+//Takes 5 inputs and ands them together
+//Nathan Moder & Mai Nou Yang 
+
+CHIP And5Way {
+	IN a , b , c , d , e ; 
+	OUT out ; 
+	
+	PARTS:
+	
+	//implementation
+	
+	And(a = a , b = b , out = aAndB) ; 
+	And(a = c , b = d , out = cAndD) ; 
+	And(a = aAndB , b = e , out = aAndBAndE) ; 
+	And(a = cAndD , b = aAndBAndE , out = out) ; 
+}
