@@ -30,7 +30,7 @@ CHIP Larc {
     Mux4Way16(a = pcOut , b = false , c = rd1Out , sel[0] = alu10 , sel[1] = alu11 , out = alu1SelOut) ;
 
     //ALU2 selector
-    Mux4Way16(a = rd2Out , b = true , c = sOrLOut , d = aluOutOutput , sel[0] = alu21 , sel[1] = alu20 , out = alu2SelOut) ;
+    Mux4Way16(a = rd2Out , b = true , c = sOrLOut , d = aluOutOutput , sel[0] = alu20 , sel[1] = alu21 , out = alu2SelOut) ;
 
     //ALU implementation
     ALU(a = alu1SelOut , b = alu2SelOut , sub = sub , nor = nor , z = z , out = aluOutput) ;

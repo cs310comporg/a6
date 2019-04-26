@@ -39,9 +39,11 @@ CHIP ALU {
 	ALU1bit(a = a[12] , b = b[12] , sub = sub , nor = xnor , cin = cout11  , out = out13 , cout = cout12) ;
 	ALU1bit(a = a[13] , b = b[13] , sub = sub , nor = xnor , cin = cout12  , out = out14 , cout = cout13) ;
 	ALU1bit(a = a[14] , b = b[14] , sub = sub , nor = xnor , cin = cout13  , out = out15 , cout = cout14) ;
-	ALU1bit(a = a[15] , b = b[15] , sub = sub , nor = xnor , cin = cout14  , out = out16 , cout = overflow) ;
+	ALU1bit(a = a[15] , b = b[15] , sub = sub , nor = xnor , cin = cout14  , out = out16 , cout = cout15) ;
 	
-	Xor(a = overflow , b = out16 , out = overflowOut) ; 
+	Xor(a = cout14 , b = cout15 , out = overflowOut) ; 
+	
+	//If overflow use it change out16
 	
 	Or16Way(a = out1 , b = out2 , c = out3 , d = out4 , e = out5 , f = out6 , g = out7 , h = out8 , i = out9 , j = out10 , k = out11 , l = out12 , m = out13 , n = out14 , o = out15 , p = out16 , out = outOr16) ;
 	Not(in = outOr16 , out = z) ;

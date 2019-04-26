@@ -55,8 +55,8 @@ CHIP CU {
     Or16Way(a = s12 , out = mdrWrite) ;
     Or16Way(a = s11 , out = lw) ; 
     Or16Way(a = s7 , out = li) ;
-    Or16Way(a = s3 , b = s13 , out = rfwd0) ;
-    Or16Way(a = s3 , b = s16 , out = rfwd1) ;
+    Or16Way(a = s3 , b = s13 , out = rfwd1) ;
+    Or16Way(a = s3 , b = s16 , out = rfwd0) ;
     Or16Way(a = s3 , b = s7 , c = s8 , d = s13 , e = s16 , out = rfWrite) ;
     Or16Way(a = s1 , out = sOrL) ; 
     Or16Way(a = s1 , out = rd1Write ) ; 
