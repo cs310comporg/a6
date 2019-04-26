@@ -14,7 +14,7 @@ CHIP CU {
         rfwd0 , rfwd1 , rfWrite , sOrL , 
         rd1Write , rd2Write , alu10 , 
         alu11 , alu20 , alu21 , sub , 
-        nor , bn , be , aluOut , jal;
+        nor , bn , be , aluOut , jal , halt ;
 
     PARTS:
 
@@ -47,8 +47,9 @@ CHIP CU {
     And5Way(a = notS4 , b = sBit3 , c = sBit2 , d = sBit1 , e = notS0 , out = s14) ; 
     And5Way(a = notS4 , b = sBit3 , c = sBit2 , d = sBit1 , e = sBit0 , out = s15) ; 
     And5Way(a = sBit4 , b = notS3 , c = notS2 , d = notS1 , e = notS0 , out = s16) ; 
+    And5Way(a = sBit4 , b = notS3 , c = notS2 , d = notS1 , e = sBit0 , out = s17) ; 
 
-    Or16Way(a = s0 , b = s9 , c = s10 , d = s16, out = pcWrite) ; 
+    Or16Way(a = s0 , b = s9 , c = s10 , d = s16 , e = s17 ,  out = pcWrite) ; 
     Or16Way(a = s12 , b = s15 , out = mSrc) ; 
     Or16Way(a = s15 , out = mWrite) ; 
     Or16Way(a = s0 , out = irWrite) ;
@@ -64,20 +65,23 @@ CHIP CU {
     Or16Way(a = s2 , b = s4 , c = s5 , d = s6, e = s11 , f = s14 , out = alu11) ;
     Or16Way(a = s9 , b = s10 , out = alu10) ; 
     Or16Way(a = s11 , b = s14, c = s1 , out = alu21) ; 
-    Or16Way(a = s0 , out = alu20);
-    Or16Way(a = s4 , b = s6 ,  c = s9 , d = s10 , out = sub) ; 
+    Or16Way(a = s0 , b = s17 , out = alu20);
+    Or16Way(a = s4 , b = s6 ,  c = s9 , d = s10 , e = s17 , out = sub) ; 
     Or16Way(a = s5 , b = s6 , out = nor) ; 
     Or16Way(a = s10 , out = bn) ;
     Or16Way(a = s9 , out = be) ; 
     Or16Way(a = s1 , b = s2 , c = s4 , d = s5 , e = s6 , f = s11 , g = s14 , out = aluOut) ;
     Or16Way(a = s16 , out = jal) ; 
+    Or16Way(a = s17 , out = halt) ;
+   
+   And5Way(a = opcode[0] , b = opcode[1] , c = opcode[2] , d = opcode[3] , e = s1 , out = haltInternal ) ; 
 
     //ns0 implementation
     And5Way(a = s1 , b = notOp3 , c = opcode[2] , d = opcode[1] , e = notOp0, out = ns0InputF) ; 
     And5Way(a = s1 , b = opcode[3] , c = notOp2 , d = notOp1 , e = notOp0 , out = ns0InputG) ;
     And5Way(a = s1 , b = notOp2 , c = opcode[1] , d = opcode[3] , e = notOp0 , out = ns0InputH) ; 
     And5Way(a = s1 , b = opcode[3] , c = opcode[2] , d = notOp1 , e = notOp0 , out = ns0InputI) ; 
-    Or16Way(a = s0 , b = s2 , c = s4 , d = s5 , e = s6 , f = ns0InputF , g = ns0InputG , h = ns0InputH , i = ns0InputI , j = s12 , k = s14 , out = ns0) ; 
+    Or16Way(a = s0 , b = s2 , c = s4 , d = s5 , e = s6 , f = ns0InputF , g = ns0InputG , h = ns0InputH , i = ns0InputI , j = s12 , k = s14 , l = haltInternal ,  out = ns0) ; 
     
     //ns1 implementation 
     And5Way(a = s1 , b = notOp0 , c = notOp1 , d = notOp2 , e = notOp3 , out = ns1InputA) ; 
@@ -105,23 +109,23 @@ CHIP CU {
     Or16Way(a = ns3InputA , b = ns3InputB , c = ns3InputC , d = ns3InputD , e = ns3InputE , f = s11 , g = s12 , h = s14 , out = ns3) ;
     
     //ns4 implementation 
-    And5Way(a = s1 , b = opcode[3] , c = opcode[2] , d = opcode[1] , e = notOp0 , out = ns4) ; 
+    And5Way(a = s1 , b = opcode[3] , c = opcode[2] , d = opcode[1] , e = notOp0 , out = s1AndJal) ;
+    And5Way(a = s1 , b = opcode[3] , c = opcode[2] , d = opcode[1] , e = opcode[1] , out = s1AndHalt) ; 
+    Or(a = s1AndHalt , b = s1AndJal , out = ns4) ; 
     
     //continue instruction for register
-    Or(a = s3 , b = s13 , out = s3NorS13) ;
-    Or(a = s15 , b = s16 , out = s15NorS16) ;
-    Or(a = s3NorS13 , b = s15NorS16 , out = fakeCont) ; 
+    Or16Way(a = s3 , b = s13 , c = s15 , d = s16 , e = s7 , f = s8 , g = s9 , h = s10 , out = fakeCont) ; 
     Not(in = fakeCont , out = continue) ; 
     
- //   And(a = ns0 , b = continue, out = ns0AndCont) ; 
- //   And(a = ns1 , b = continue, out = ns1AndCont) ; 
- //   And(a = ns2 , b = continue, out = ns2AndCont) ; 
- //   And(a = ns3 , b = continue, out = ns3AndCont) ; 
- //   And(a = ns4 , b = continue, out = ns4AndCont) ; 
+    And(a = ns0 , b = continue, out = ns0AndCont) ; 
+    And(a = ns1 , b = continue, out = ns1AndCont) ; 
+    And(a = ns2 , b = continue, out = ns2AndCont) ; 
+    And(a = ns3 , b = continue, out = ns3AndCont) ; 
+    And(a = ns4 , b = continue, out = ns4AndCont) ; 
     
-    Bit(in = ns0 , load = continue , out = sBit0) ; 
-    Bit(in = ns1 , load = continue , out = sBit1) ; 
-    Bit(in = ns2 , load = continue , out = sBit2) ; 
-    Bit(in = ns3 , load = continue , out = sBit3) ; 
-    Bit(in = ns4 , load = continue , out = sBit4) ; 
+    Bit(in = ns0AndCont , load = true , out = sBit0) ; 
+    Bit(in = ns1AndCont , load = true , out = sBit1) ; 
+    Bit(in = ns2AndCont , load = true , out = sBit2) ; 
+    Bit(in = ns3AndCont , load = true , out = sBit3) ; 
+    Bit(in = ns4AndCont , load = true , out = sBit4) ; 
 }

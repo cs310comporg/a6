@@ -1,4 +1,5 @@
 /**
+ * Mai Nou Yang & Nathan Moder
  * Larc ALU:
  *   switch( {nor,sub} ) {
  *     case {0,0}: out = a + b            (z set if out == 0)
@@ -41,7 +42,8 @@ CHIP ALU {
 	ALU1bit(a = a[14] , b = b[14] , sub = sub , nor = xnor , cin = cout13  , out = out15 , cout = cout14) ;
 	ALU1bit(a = a[15] , b = b[15] , sub = sub , nor = xnor , cin = cout14  , out = out16 , cout = cout15) ;
 	
-	Xor(a = cout14 , b = cout15 , out = overflowOut) ; 
+	Xor(a = cout14 , b = cout15 , out = overflow) ; 
+    Xor(a = overflow , b = out16 , out = overflowOut) ; 
 	
 	//If overflow use it change out16
 	

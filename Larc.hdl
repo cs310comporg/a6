@@ -11,7 +11,10 @@ CHIP Larc {
     PARTS:
 
     //Program Counter implementation
-    PC(in = pcInput , load = pcWrite , out = currPc , out = pcOut , inc = false , reset = false) ;
+    PC(in = pcInput , load = pcWrite , out = pcOut , inc = false , reset = false) ;
+    
+    //halt implementation
+   // Mux16(a = pcInput , b = pcOut , sel = halt , out = pcInHalt) ; 
 
     //M Src mux
     Mux16(a = pcOut , b = aluOutOutput , sel = mSrc , out[0..13] = mInput) ;
@@ -30,7 +33,7 @@ CHIP Larc {
     Mux4Way16(a = pcOut , b = false , c = rd1Out , sel[0] = alu10 , sel[1] = alu11 , out = alu1SelOut) ;
 
     //ALU2 selector
-    Mux4Way16(a = rd2Out , b = true , c = sOrLOut , d = aluOutOutput , sel[0] = alu20 , sel[1] = alu21 , out = alu2SelOut) ;
+    Mux4Way16(a = rd2Out , b[0] = true , c = sOrLOut , sel[0] = alu20 , sel[1] = alu21 , out = alu2SelOut) ;
 
     //ALU implementation
     ALU(a = alu1SelOut , b = alu2SelOut , sub = sub , nor = nor , z = z , out = aluOutput) ;
@@ -75,6 +78,6 @@ CHIP Larc {
     //CU 
     CU(opcode = opcode , pcWrite = pcWrite , mSrc = mSrc , mWrite = mWrite , irWrite = irWrite , mdrWrite = mdrWrite , lw = lw , li = li , 
         rfwd0 = rfwd0 , rfwd1 = rfwd1 , rfWrite = rfWrite , sOrL = sOrL , rd1Write = rd1Write , rd2Write = rd2Write , alu10  = alu10 ,
-        alu11 = alu11 , alu20 = alu20 , alu21 = alu21 , sub = sub , nor = nor , bn = bn , be = be , aluOut = aluOut , jal = jal) ; 
+        alu11 = alu11 , alu20 = alu20 , alu21 = alu21 , sub = sub , nor = nor , bn = bn , be = be , aluOut = aluOut , jal = jal , halt =  halt) ; 
 
 }

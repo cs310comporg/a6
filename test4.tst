@@ -73,4 +73,4 @@ set RAM16K[2832] %XBF2D,
 set RAM16K[2833] %XE090
 ;
 
-repeat 1000 { tick, tock; }
+repeat 1200 { tick, tock; }
