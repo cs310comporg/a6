@@ -9,61 +9,119 @@
 CHIP CU {
 
     IN opcode[4];
-    OUT ;
-	// Output missing
-
-
-
+    OUT pcWrite , mSrc , mWrite , 
+        irWrite , mdrWrite , lw , li , 
+        rfwd0 , rfwd1 , rfWrite , sOrL , 
+        rd1Write , rd2Write , alu10 , 
+        alu11 , alu20 , alu21 , sub , 
+        nor , bn , be , aluOut , jal;
 
     PARTS:
 
-	Not(in = s0 , out = notS0) ;
-	Not(in = s1 , out = notS1) ;
-	Not(in = s2 , out = notS2) ;
-	Not(in = s3 , out = notS3) ;
-	Not(in = s4 , out = notS4) ;
-	
-	//states implementation
-	And5Way(a = notS4 , b = notS3 , c = notS2 , d = notS1 , e = notS0 , out = state0) ; 
-	And5Way(a = notS4 , b = notS3 , c = notS2 , d = notS1 , e = s0 , out = state1) ; 
-	And5Way(a = notS4 , b = notS3 , c = notS2 , d = s1 , e = notS0 , out = state2) ; 
-	And5Way(a = notS4 , b = notS3 , c = notS2 , d = s1 , e = s0 , out = state3) ; 
-	And5Way(a = notS4 , b = notS3 , c = s2 , d = notS1 , e = notS0 , out = state4) ; 
-	And5Way(a = notS4 , b = notS3 , c = s2 , d = notS1 , e = s0 , out = state5) ; 
-	And5Way(a = notS4 , b = notS3 , c = s2 , d = s1 , e = notS0 , out = state6) ; 
-	And5Way(a = notS4 , b = notS3 , c = s2 , d = s1 , e = s0 , out = state7) ; 
-	And5Way(a = notS4 , b = s3 , c = notS2 , d = notS1 , e = notS0 , out = state8) ; 
-	And5Way(a = notS4 , b = s3 , c = notS2 , d = notS1 , e = s0 , out = state9) ; 
-	And5Way(a = notS4 , b = s3 , c = notS2 , d = s1 , e = notS0 , out = state10) ; 
-	And5Way(a = notS4 , b = s3 , c = notS2 , d = s1 , e = s0 , out = state11) ; 
-	And5Way(a = notS4 , b = s3 , c = s2 , d = notS1 , e = notS0 , out = state12) ; 
-	And5Way(a = notS4 , b = s3 , c = s2 , d = notS1 , e = s0 , out = state13) ; 
-	And5Way(a = notS4 , b = s3 , c = s2 , d = s1 , e = notS0 , out = state14) ; 
-	And5Way(a = notS4 , b = s3 , c = s2 , d = s1 , e = s0 , out = state15) ; 
-	And5Way(a = s4 , b = notS3 , c = notS2 , d = notS1 , e = notS0 , out = state16) ; 
+    Not(in = sBit0 , out = notS0) ;
+    Not(in = sBit1 , out = notS1) ;
+    Not(in = sBit2 , out = notS2) ;
+    Not(in = sBit3 , out = notS3) ;
+    Not(in = sBit4 , out = notS4) ;
+    
+    Not(in = opcode[0] , out = notOp0) ; 
+    Not(in = opcode[1] , out = notOp1) ; 
+    Not(in = opcode[2] , out = notOp2) ; 
+    Not(in = opcode[3] , out = notOp3) ; 
 
-	Or16Way(a = state0 , b = state9 , c = state10 , d = state16, out = pcWrite) ; 
-	Or16Way(a = state12 , b = state15 , out = mSrc) ; 
-	Or16Way(a = state15 , out = mWrite) ; 
-	Or16Way(a = state0 , out = irWrite) ;
-	Or16Way(a = state12 , out = mdrWrite)
-	Or16Way(a = state11 , out = lw) ; 
-	Or16Way(a = state7 , out = li) ;
-	Or16Way(a = state3 , b = state13 , out = rfwd0) ;
-	Or16Way(a = state3 , b = state16 , out = rfwd1) ;
-	Or16Way(a = state3 , b = state7 , c = state8 , d = state13 , e = state16 out = rfWrite) ;
-	Or16Way(a = state1 , out = sOrL) ; 
-	Or16Way(a = state1 , out = rd1Write ) ; 
-	Or16Way(a = state1 , out = rd2Write ) ; 
-	Or16Way(a = state2 , b = state4 , c = state5 , d = state6, e = state11 , f = state14 , out = alu10) ;
-	Or16Way(a = state9 , b = state10 , out = alu11) ; 
-	Or16Way(a = state11 , b = state14, c = state1 , out = alu20) ; 
-	Or16Way(a = state0 , out = alu21);
-	Or16Way(a = state4 , b = state6 ,  c = state9 , d = state10 , out = sub) ; 
-	Or16Way(a = state5 , b = state6 , out = nor) ; 
-	Or16Way(a = state10 , out = bn) ;
-	Or16Way(a = state9 , out = be) ; 
-	Or16Way(a = state1 , b = state2 , c = state4 , d = state5 , e = state6 , f = state11 , g = state14 , out = aluOut) ;
-	Or16Way(a = state16 , out = jal) ; 
+    //states implementation
+    And5Way(a = notS4 , b = notS3 , c = notS2 , d = notS1 , e = notS0 , out = s0) ; 
+    And5Way(a = notS4 , b = notS3 , c = notS2 , d = notS1 , e = sBit0 , out = s1) ; 
+    And5Way(a = notS4 , b = notS3 , c = notS2 , d = sBit1 , e = notS0 , out = s2) ; 
+    And5Way(a = notS4 , b = notS3 , c = notS2 , d = sBit1 , e = sBit0 , out = s3) ; 
+    And5Way(a = notS4 , b = notS3 , c = sBit2 , d = notS1 , e = notS0 , out = s4) ; 
+    And5Way(a = notS4 , b = notS3 , c = sBit2 , d = notS1 , e = sBit0 , out = s5) ; 
+    And5Way(a = notS4 , b = notS3 , c = sBit2 , d = sBit1 , e = notS0 , out = s6) ; 
+    And5Way(a = notS4 , b = notS3 , c = sBit2 , d = sBit1 , e = sBit0 , out = s7) ; 
+    And5Way(a = notS4 , b = sBit3 , c = notS2 , d = notS1 , e = notS0 , out = s8) ; 
+    And5Way(a = notS4 , b = sBit3 , c = notS2 , d = notS1 , e = sBit0 , out = s9) ; 
+    And5Way(a = notS4 , b = sBit3 , c = notS2 , d = sBit1 , e = notS0 , out = s10) ; 
+    And5Way(a = notS4 , b = sBit3 , c = notS2 , d = sBit1 , e = sBit0 , out = s11) ; 
+    And5Way(a = notS4 , b = sBit3 , c = sBit2 , d = notS1 , e = notS0 , out = s12) ; 
+    And5Way(a = notS4 , b = sBit3 , c = sBit2 , d = notS1 , e = sBit0 , out = s13) ; 
+    And5Way(a = notS4 , b = sBit3 , c = sBit2 , d = sBit1 , e = notS0 , out = s14) ; 
+    And5Way(a = notS4 , b = sBit3 , c = sBit2 , d = sBit1 , e = sBit0 , out = s15) ; 
+    And5Way(a = sBit4 , b = notS3 , c = notS2 , d = notS1 , e = notS0 , out = s16) ; 
 
+    Or16Way(a = s0 , b = s9 , c = s10 , d = s16, out = pcWrite) ; 
+    Or16Way(a = s12 , b = s15 , out = mSrc) ; 
+    Or16Way(a = s15 , out = mWrite) ; 
+    Or16Way(a = s0 , out = irWrite) ;
+    Or16Way(a = s12 , out = mdrWrite) ;
+    Or16Way(a = s11 , out = lw) ; 
+    Or16Way(a = s7 , out = li) ;
+    Or16Way(a = s3 , b = s13 , out = rfwd0) ;
+    Or16Way(a = s3 , b = s16 , out = rfwd1) ;
+    Or16Way(a = s3 , b = s7 , c = s8 , d = s13 , e = s16 , out = rfWrite) ;
+    Or16Way(a = s1 , out = sOrL) ; 
+    Or16Way(a = s1 , out = rd1Write ) ; 
+    Or16Way(a = s1 , out = rd2Write ) ; 
+    Or16Way(a = s2 , b = s4 , c = s5 , d = s6, e = s11 , f = s14 , out = alu11) ;
+    Or16Way(a = s9 , b = s10 , out = alu10) ; 
+    Or16Way(a = s11 , b = s14, c = s1 , out = alu21) ; 
+    Or16Way(a = s0 , out = alu20);
+    Or16Way(a = s4 , b = s6 ,  c = s9 , d = s10 , out = sub) ; 
+    Or16Way(a = s5 , b = s6 , out = nor) ; 
+    Or16Way(a = s10 , out = bn) ;
+    Or16Way(a = s9 , out = be) ; 
+    Or16Way(a = s1 , b = s2 , c = s4 , d = s5 , e = s6 , f = s11 , g = s14 , out = aluOut) ;
+    Or16Way(a = s16 , out = jal) ; 
+
+    //ns0 implementation
+    And5Way(a = s1 , b = notOp3 , c = opcode[2] , d = opcode[1] , e = notOp0, out = ns0InputF) ; 
+    And5Way(a = s1 , b = opcode[3] , c = notOp2 , d = notOp1 , e = notOp0 , out = ns0InputG) ;
+    And5Way(a = s1 , b = notOp2 , c = opcode[1] , d = opcode[3] , e = notOp0 , out = ns0InputH) ; 
+    And5Way(a = s1 , b = opcode[3] , c = opcode[2] , d = notOp1 , e = notOp0 , out = ns0InputI) ; 
+    Or16Way(a = s0 , b = s2 , c = s4 , d = s5 , e = s6 , f = ns0InputF , g = ns0InputG , h = ns0InputH , i = ns0InputI , j = s12 , k = s14 , out = ns0) ; 
+    
+    //ns1 implementation 
+    And5Way(a = s1 , b = notOp0 , c = notOp1 , d = notOp2 , e = notOp3 , out = ns1InputA) ; 
+    And5Way(a = s1 , b = notOp3 , c = opcode[2] , d = opcode[1] , e = opcode[0] , out = ns1InputF) ;
+    And5Way(a = s1 , b = opcode[3] , c = notOp2 , d = notOp1 , e = notOp0 , out = ns1InputG); 
+    And5Way(a = s1 , b = opcode[3] , c = notOp2 , d = opcode[1] , e = opcode[0] , out = ns1InputH) ; 
+    And5Way(a = s1 , b = opcode[3] , c = opcode[2] , d = notOp1 , e = notOp0 , out = ns1InputI) ; 
+    And5Way(a = s1 , b = opcode[3] , c = opcode[2] , d = notOp1 , e = opcode[0] , out = ns1InputJ) ; 
+    Or16Way(a = ns1InputA , b = s2 , c = s4 , d = s5 , e = s6 , f = ns1InputF , g = ns1InputG , h = ns1InputH , i = ns1InputI , j = ns1InputJ , k = s14, out = ns1) ; 
+    
+    //ns2 implementation
+    And5Way(a = s1 , b = notOp3 , c = notOp2 , d = notOp1 , e = opcode[0] , out = ns2InputA) ;
+    And5Way(a = s1 , b = notOp3 , c = opcode[2] , d = opcode[1] , e = notOp0 , out = ns2InputB) ; 
+    And5Way(a = s1 , b = notOp3 , c = opcode[2] , d = opcode[1] , e = opcode[0] , out = ns2InputC) ; 
+    And5Way(a = s1 , b = opcode[3] , c = notOp2 , d = notOp1 , e = notOp0 , out = ns2InputD) ; 
+    And5Way(a = s1 , b = opcode[3] , c = opcode[2] , d = notOp1 , e = opcode[0] , out = ns2InputE) ; 
+    Or16Way(a = ns2InputA , b = ns2InputB , c = ns2InputC , d = ns2InputD , e = ns2InputE , f = s11 , g = s12 , h = s14 , out = ns2) ; 
+    
+    //ns3 implementation
+    And5Way(a = s1 , b = opcode[3] , c = notOp2 , d = notOp1 , e = opcode[0] , out = ns3InputA) ; 
+    And5Way(a = s1 , b = opcode[3] , c = notOp2 , d = opcode[1] , e = notOp0 , out = ns3InputB) ; 
+    And5Way(a = s1 , b = opcode[3] , c = notOp2 , d = opcode[1] , e = opcode[0] , out = ns3InputC) ; 
+    And5Way(a = s1 , b = opcode[3] , c = opcode[2] , d = notOp1 , e = notOp0 , out = ns3InputD) ; 
+    And5Way(a = s1 , b = opcode[3] , c = opcode[2] , d = notOp1 , e = opcode[0] , out = ns3InputE) ; 
+    Or16Way(a = ns3InputA , b = ns3InputB , c = ns3InputC , d = ns3InputD , e = ns3InputE , f = s11 , g = s12 , h = s14 , out = ns3) ;
+    
+    //ns4 implementation 
+    And5Way(a = s1 , b = opcode[3] , c = opcode[2] , d = opcode[1] , e = notOp0 , out = ns4) ; 
+    
+    //continue instruction for register
+    Or(a = s3 , b = s13 , out = s3NorS13) ;
+    Or(a = s15 , b = s16 , out = s15NorS16) ;
+    Or(a = s3NorS13 , b = s15NorS16 , out = fakeCont) ; 
+    Not(in = fakeCont , out = continue) ; 
+    
+ //   And(a = ns0 , b = continue, out = ns0AndCont) ; 
+ //   And(a = ns1 , b = continue, out = ns1AndCont) ; 
+ //   And(a = ns2 , b = continue, out = ns2AndCont) ; 
+ //   And(a = ns3 , b = continue, out = ns3AndCont) ; 
+ //   And(a = ns4 , b = continue, out = ns4AndCont) ; 
+    
+    Bit(in = ns0 , load = continue , out = sBit0) ; 
+    Bit(in = ns1 , load = continue , out = sBit1) ; 
+    Bit(in = ns2 , load = continue , out = sBit2) ; 
+    Bit(in = ns3 , load = continue , out = sBit3) ; 
+    Bit(in = ns4 , load = continue , out = sBit4) ; 
 }
